@@ -25,12 +25,12 @@ inputs:
 runs:
   using: composite
   steps:
-    - if: ${{inputs.registry}} == "ecr"
+    - if: ${{ inputs.registry }} == "ecr"
       uses: unfor19/install-aws-cli-action@v1
-    - if: ${{inputs.registry}} == "ecr"
+    - if: ${{ inputs.registry }} == "ecr"
       run: |
-        aws configure set aws_access_key_id ${{secrets.AWS_ACCESS_KEY_ID}}
-        aws configure set aws_secret_access_key ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        aws configure set aws_access_key_id ${{ inputs.username }}
+        aws configure set aws_secret_access_key ${{inputs.password}}
         aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{inputs.registry_url}}
       shell: "bash"
     - if: ${{inputs.registry}} != "ecr"
