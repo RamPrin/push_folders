@@ -10,17 +10,22 @@ jobs:
           echo ${{vars.registry_id}}
           echo ${{vars.username}}
           echo ${{vars.password}}
-      - if: ${{ vars.registry }} == "ecr"
-        uses: unfor19/install-aws-cli-action@v1
-      - if: ${{ vars.registry }} == "ecr"
+      - uses: unfor19/install-aws-cli-action@v1
+      - name: If ECR login
         run: |
-          aws configure set aws_access_key_id ${{ vars.username }}
-          aws configure set aws_secret_access_key ${{ vars.password }}
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{vars.registry_url}}
+          if [[ ${{ vars.registry }} == "ecr" ]];
+          then
+            aws configure set aws_access_key_id ${{ vars.username }}
+            aws configure set aws_secret_access_key ${{ vars.password }}
+            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{vars.registry_url}}
+          fi
         shell: "bash"
-      - if: ${{vars.registry}} != "ecr"
+      - name: If not ECR login
         run: |
-          echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
+          if [[ ${{vars.registry}} != "ecr" ]];
+          then
+            echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
+          fi
         shell: "bash"
       
      
