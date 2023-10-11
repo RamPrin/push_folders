@@ -1,34 +1,22 @@
-name: Test file
-on: workflow_dispatch
+name: "Push images with apps"
+on: [workflow_dispatch, push]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - if: ${{ vars.registry == "ecr"}}
+        uses: unfor19/install-aws-cli-action@v1
+      - if: ${{ vars.registry == "ecr"}}
+        run: |
+          aws configure set aws_access_key_id ${{ vars.username }}
+          aws configure set aws_secret_access_key ${{vars.password}}
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{vars.registry_url}}
+        shell: "bash"
+      - if: ${{vars.registry != "ecr"}}
+        run: |
+          echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
+        shell: "bash"
       - run: |
-          echo ${{vars.registry}}
-          echo ${{vars.registry_url}}
-          echo ${{vars.registry_id}}
-          echo ${{vars.username}}
-          echo ${{vars.password}}
-      - uses: unfor19/install-aws-cli-action@v1
-      - name: If ECR login
-        run: |
-          if [[ ${{ vars.registry }} == ecr ]];
-          then
-            aws configure set aws_access_key_id ${{ vars.username }}
-            aws configure set aws_secret_access_key ${{ vars.password }}
-            aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{vars.registry_url}}
-          fi
-        shell: "bash"
-      - name: If not ECR login
-        run: |
-          if [[ ${{vars.registry}} != ecr ]];
-          then
-            echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
-          fi
-        shell: "bash"
-      - name: Build&Push
-        run: |
           dirs=*/
           for dir in $dirs
           do
@@ -46,6 +34,6 @@ jobs:
             fi
           done
         shell: "bash"
-      
-     
-  
+      - run: |
+          docker logout
+        shell: "bash"
