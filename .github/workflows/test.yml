@@ -27,6 +27,26 @@ jobs:
             echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
           fi
         shell: "bash"
+      - name: Build&Push
+        run: |
+          export REG="${{vars.registry_url}}/${{vars.registry_id}}"
+          dirs=*/
+          for dir in $dirs
+          do
+          name=$(basename $dir)
+          if [[ -e $dir ]] && [[ $name != .* ]] && [[ -f $name/Dockerfile ]];
+            then
+              echo "Make image from $name/Dockerfile"
+              docker build -t $REG/$name:${{github.sha}} \
+                            -t $REG/$name:latest $dir
+              if [[ ${{vars.registry == "ecr" ]];
+                then
+                          aws ecr-public describe-repositories --repository-names $name --region us-east-1 || aws ecr-public create-repository --repository-name $name --region us-east-1
+                fi
+                    docker push --all-tags $REG/$name
+            fi
+          done
+        shell: "bash"
       
      
   
