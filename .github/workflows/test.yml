@@ -29,7 +29,6 @@ jobs:
         shell: "bash"
       - name: Build&Push
         run: |
-          REG="${{vars.registry_url}}/${{vars.registry_id}}"
           dirs=*/
           for dir in $dirs
           do
@@ -37,13 +36,13 @@ jobs:
           if [[ -e $dir ]] && [[ $name != .* ]] && [[ -f $name/Dockerfile ]];
             then
               echo "Make image from $name/Dockerfile"
-              docker build -t $REG/$name:${{github.sha}} \
-                            -t $REG/$name:latest $dir
+              docker build -t ${{vars.registry_url}}/${{vars.registry_id}}/$name:${{github.sha}} \
+                            -t ${{vars.registry_url}}/${{vars.registry_id}}/$name:latest $dir
               if [[ ${{vars.registry == "ecr" ]];
                 then
                           aws ecr-public describe-repositories --repository-names $name --region us-east-1 || aws ecr-public create-repository --repository-name $name --region us-east-1
                 fi
-                    docker push --all-tags $REG/$name
+                    docker push --all-tags ${{vars.registry_url}}/${{vars.registry_id}}/$name
             fi
           done
         shell: "bash"
