@@ -53,3 +53,6 @@ runs:
           fi
         done
       shell: "bash"
+    - run: |
+        docker logout
+      shell: "bash"
