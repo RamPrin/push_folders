@@ -1,8 +1,9 @@
 name: "Push images with apps"
 description: "Find the directories with Dockerfiles (not-recursively), build images and push them to the registry"
 author: RamPrin
-icon: arrow-right
-color: purple
+branding:
+  icon: arrow-right
+  color: purple
 inputs:
   registry:
     description: "Which registry to push into (ecr, cr.yandex, ghcr)"
