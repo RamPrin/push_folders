@@ -29,7 +29,7 @@ jobs:
         shell: "bash"
       - name: Build&Push
         run: |
-          export REG="${{vars.registry_url}}/${{vars.registry_id}}"
+          export REG="${{vars.registry_url}}/" + "${{vars.registry_id}}"
           dirs=*/
           for dir in $dirs
           do
