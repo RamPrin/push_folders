@@ -4,6 +4,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - run: |
+          echo ${{vars.registry}}
+          echo ${{vars.registry_url}}
+          echo ${{vars.registry_id}}
+          echo ${{vars.username}}
+          echo ${{vars.password}}
       - if: ${{ vars.registry }} == "ecr"
         uses: unfor19/install-aws-cli-action@v1
       - if: ${{ vars.registry }} == "ecr"
