@@ -1,0 +1,36 @@
+name: "Push images with apps"
+description: "Find the directories with Dockerfiles (not-recursively), build images and push them to the registry"
+runs:
+  using: composite
+  steps:
+    - if: ${{inputs.registry}} == "ecr"
+      uses: unfor19/install-aws-cli-action@v1
+    - if: ${{inputs.registry}} == "ecr"
+      run: |
+        aws configure set aws_access_key_id ${{secrets.AWS_ACCESS_KEY_ID}}
+        aws configure set aws_secret_access_key ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{inputs.registry_url}}
+      shell: "bash"
+    - if: ${{inputs.registry}} != "ecr"
+      run: |
+        echo ${{inputs.password}} | docker login --username ${{inputs.username}} --password-stdin
+      shell: "bash"
+    - run: |
+        export REG="${{inputs.registry_url/inputs.registry_id}}"
+        dirs=*/
+        for dir in $dirs
+        do
+        name=$(basename $dir)
+        if [[ -e $dir ]] && [[ $name != .* ]] && [[ -f $name/Dockerfile ]];
+          then
+            echo "Make image from $name/Dockerfile"
+            docker build -t $REG/$name:${{github.sha}} \
+                          -t $REG/$name:latest $dir
+            if [[ ${{inputs.registry == "ecr" ]];
+              then
+                        aws ecr-public describe-repositories --repository-names $name --region us-east-1 || aws ecr-public create-repository --repository-name $name --region us-east-1
+              fi
+                  docker push --all-tags $REG/$name
+          fi
+        done
+      shell: "bash"
