@@ -38,7 +38,7 @@ runs:
         echo ${{inputs.password}} | docker login --username ${{inputs.username}} --password-stdin ${{inputs.registry_url}}
       shell: "bash"
     - run: |
-        export REG="${{inputs.registry_url/inputs.registry_id}}"
+        export REG="${{inputs.registry_url}}/${{inputs.registry_id}}"
         dirs=*/
         for dir in $dirs
         do
