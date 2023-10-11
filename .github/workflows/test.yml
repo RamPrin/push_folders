@@ -17,7 +17,7 @@ jobs:
           echo ${{env.password}} | docker login --username ${{env.username}} --password-stdin ${{env.registry_url}}
         shell: "bash"
       - run: |
-          export REG="${{env.registry_url}}/${{env.registry_id}}"
+          export REG=${{env.registry_url}}/${{env.registry_id}}
           dirs=*/
           for dir in $dirs
           do
