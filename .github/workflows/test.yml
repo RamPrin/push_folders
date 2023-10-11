@@ -4,13 +4,18 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - if: ${{ env.registry }} == "ecr"
+      - if: ${{ vars.registry }} == "ecr"
         uses: unfor19/install-aws-cli-action@v1
-      - if: ${{ env.registry }} == "ecr"
+      - if: ${{ vars.registry }} == "ecr"
         run: |
-          aws configure set aws_access_key_id ${{ env.username }}
-          aws configure set aws_secret_access_key ${{ env.password }}
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{env.registry_url}}
+          aws configure set aws_access_key_id ${{ vars.username }}
+          aws configure set aws_secret_access_key ${{ vars.password }}
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{vars.registry_url}}
         shell: "bash"
+      - if: ${{vars.registry}} != "ecr"
+        run: |
+          echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
+        shell: "bash"
+      
      
   
