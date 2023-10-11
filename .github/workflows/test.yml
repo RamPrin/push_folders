@@ -1,21 +1,21 @@
-name: "Push images with apps"
+name: 'Push images with apps'
 on: [workflow_dispatch, push]
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - if: ${{ vars.registry == "ecr"}}
+      - if: ${{ vars.registry == 'ecr' }}
         uses: unfor19/install-aws-cli-action@v1
-      - if: ${{ vars.registry == "ecr"}}
+      - if: ${{ vars.registry == 'ecr' }}
         run: |
           aws configure set aws_access_key_id ${{ vars.username }}
-          aws configure set aws_secret_access_key ${{vars.password}}
-          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{vars.registry_url}}
-        shell: "bash"
-      - if: ${{vars.registry != "ecr"}}
+          aws configure set aws_secret_access_key ${{ vars.password }}
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ vars.registry_url }}
+        shell: 'bash'
+      - if: ${{ vars.registry != 'ecr' }}
         run: |
-          echo ${{vars.password}} | docker login --username ${{vars.username}} --password-stdin ${{vars.registry_url}}
-        shell: "bash"
+          echo ${{ vars.password }} | docker login --username ${{vars.username}} --password-stdin ${{ vars.registry_url }}
+        shell: 'bash'
       - run: |
           dirs=*/
           for dir in $dirs
@@ -23,17 +23,17 @@ jobs:
           name=$(basename $dir)
           if [[ -e $dir ]] && [[ $name != .* ]] && [[ -f $name/Dockerfile ]];
             then
-              echo "Make image from $name/Dockerfile"
-              docker build -t ${{vars.registry_url}}/${{vars.registry_id}}/$name:${{github.sha}} \
-                            -t ${{vars.registry_url}}/${{vars.registry_id}}/$name:latest $dir
-              if [[ ${{vars.registry == "ecr" ]];
+              echo 'Make image from $name/Dockerfile'
+              docker build -t ${{ vars.registry_url }}/${{ vars.registry_id }}/$name:${{ github.sha }} \
+                            -t ${{ vars.registry_url }}/${{ vars.registry_id }}/$name:latest $dir
+              if [[ ${{ vars.registry }} == 'ecr' ]];
                 then
                           aws ecr-public describe-repositories --repository-names $name --region us-east-1 || aws ecr-public create-repository --repository-name $name --region us-east-1
                 fi
                     docker push --all-tags ${{vars.registry_url}}/${{vars.registry_id}}/$name
             fi
           done
-        shell: "bash"
+        shell: 'bash'
       - run: |
           docker logout
-        shell: "bash"
+        shell: 'bash'
