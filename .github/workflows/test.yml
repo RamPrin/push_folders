@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo ${{ env.BRANCH_NAME }}
+          echo ${{ vars.BRANCH_NAME }}
           if [[ ${{ secrets.NAME }} == 'main' ]];
           then
             echo 'MAIN'
