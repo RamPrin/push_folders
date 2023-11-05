@@ -2,12 +2,13 @@ name: 'Push images with apps'
 on: workflow_dispatch
 jobs:
   test:
-    environment: NXE
+    environment: main
     runs-on: ubuntu-latest
     steps:
       - run: |
           echo ${{ vars.BRANCH_NAME }}
-          if [[ "${{ secrets.NAME }}" == 'main' ]];
+          var=NAME
+          if [[ "${{ secrets.$var }}" == 'main' ]];
           then
             echo 'MAIN'
           else
