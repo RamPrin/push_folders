@@ -7,7 +7,7 @@ jobs:
     steps:
       - run: |
           echo ${{ vars.BRANCH_NAME }}
-          if [[ ${{ secrets.NAME }} == 'main' ]];
+          if [[ "${{ secrets.NAME }}" == 'main' ]];
           then
             echo 'MAIN'
           else
