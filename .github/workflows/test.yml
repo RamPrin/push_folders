@@ -2,7 +2,7 @@ name: 'Push images with apps'
 on: workflow_dispatch
 jobs:
   test:
-    environment: not_main
+    environment: NXE
     runs-on: ubuntu-latest
     steps:
       - run: |
