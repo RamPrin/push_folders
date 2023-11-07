@@ -9,7 +9,7 @@ jobs:
           echo "::error::Test message"
           echo ${{ vars.BRANCH_NAME }}
           var=NAME
-          if [[ "${{ secrets.$var }}" == 'main' ]];
+          if [[ "${{ secrets.NAME }}" == 'main' ]];
           then
             echo 'MAIN'
           else
