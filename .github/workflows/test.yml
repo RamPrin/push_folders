@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
+          echo "::error::Test message"
           echo ${{ vars.BRANCH_NAME }}
           var=NAME
           if [[ "${{ secrets.$var }}" == 'main' ]];
