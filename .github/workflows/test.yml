@@ -30,4 +30,11 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: test_dir
-      - run: ls
+          path: test
+      - run: |
+          ls
+          for d in test/*.txt
+          do
+            mv test/$d .
+          done
+          ls
