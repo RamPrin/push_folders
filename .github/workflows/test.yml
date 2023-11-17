@@ -1,5 +1,5 @@
 name: 'Push images with apps'
-on: workflow_dispatch
+on: [workflow_dispatch, push]
 jobs:
   test:
     environment: main
@@ -35,6 +35,6 @@ jobs:
           ls
           for d in test/*.txt
           do
-            mv test/$d .
+            mv $d .
           done
           ls
