@@ -16,25 +16,5 @@ jobs:
           else
             echo 'NOT_MAIN'
           fi
-      - uses: actions/upload-artifact@v3
-        with:
-          name: test_dir
-          path: test/
-  test_artifacts:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: test_ramprin
-      - uses: actions/download-artifact@v3
-        with:
-          name: test_dir
-          path: test
       - run: |
-          ls
-          for d in test/*.txt
-          do
-            mv $d .
-          done
-          ls
+          echo ${{ github.REPOSITORY }}
